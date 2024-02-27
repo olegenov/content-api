@@ -1,0 +1,45 @@
+package models
+
+import (
+	"fmt"
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"github.com/joho/godotenv"
+	"os"
+)
+
+var DB *gorm.DB
+
+func init() {
+	e := godotenv.Load()
+
+	if e != nil {
+		fmt.Print(e)
+	}
+
+	username := os.Getenv("POSTGRES_USER")
+	password := os.Getenv("POSTGRES_PASSWORD")
+	dbName := os.Getenv("POSTGRES_NAME")
+	dbHost := os.Getenv("POSTGRES_HOST")
+	dbPort := os.Getenv("POSTGRES_PORT")
+
+	dbUri := fmt.Sprintf("host=%s port=%s user=%s dbname=%s sslmode=disable password=%s", dbHost, dbPort, username, dbName, password)
+
+	conn, err := gorm.Open("postgres", dbUri)
+
+	if err != nil {
+		fmt.Print(err)
+		panic(err)
+	}
+
+	fmt.Println("Database connection established successfully")
+
+	DB = conn
+	DB.Debug().AutoMigrate(&User{})
+
+	fmt.Println("Database migration completed")
+}
+
+func GetDB() *gorm.DB {
+	return DB
+}
