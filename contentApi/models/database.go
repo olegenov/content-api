@@ -6,9 +6,11 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/joho/godotenv"
 	"os"
+	"sync"
 )
 
 var DB *gorm.DB
+var DbMutex sync.Mutex
 
 func init() {
 	e := godotenv.Load()
