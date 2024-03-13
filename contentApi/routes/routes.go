@@ -14,11 +14,11 @@ func StartServer() {
 	userGroup := api.Group("/users")
 	userGroup.Use(middlewares.JwtAuthMiddleware())
 	{
-		userGroup.GET("/", controllers.GetUsers)
-		userGroup.GET("/:id", controllers.GetUser)
+		userGroup.GET("/", middlewares.AdminOnly(), controllers.GetUsers)
+		userGroup.GET("/:id", middlewares.AdminOnly(), controllers.GetUser)
 		userGroup.GET("/me", controllers.CurrentUser)
-		userGroup.POST("/", controllers.CreateUser)
-		userGroup.DELETE("/:id", controllers.DeleteUser)
+		userGroup.POST("/", middlewares.AdminOnly(), controllers.CreateUser)
+		userGroup.DELETE("/:id", middlewares.AdminOnly(), controllers.DeleteUser)
 	}
 
 	authGroup := api.Group("/auth")
