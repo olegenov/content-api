@@ -65,7 +65,7 @@ func CreateUser(c *gin.Context) {
 	}
 
 	if exists, _ := UserExists(user.Username); exists == true {
-		c.JSON(http.StatusFound, gin.H{"error": "User already exists"})
+		c.JSON(http.StatusFound, gin.H{"error": "user already exists"})
 		return
 	}
 
