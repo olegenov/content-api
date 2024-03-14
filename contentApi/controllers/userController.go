@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"contentApi/dto"
 	"contentApi/models"
 	"contentApi/utils/token"
 	"errors"
@@ -24,7 +25,7 @@ func GetUsers(c *gin.Context) {
 		return
 	}
 
-	var usersResponse []models.UserResponse
+	var usersResponse []dto.UserResponse
 
 	for _, user := range users {
 		usersResponse = append(usersResponse, GetUserResponse(user))

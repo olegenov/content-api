@@ -37,6 +37,9 @@ func init() {
 	fmt.Println("Database connection established successfully")
 
 	DB = conn
+	DB.Debug().AutoMigrate(&Tag{})
+	DB.Debug().AutoMigrate(&Post{})
+	DB.Debug().AutoMigrate(&Project{})
 	DB.Debug().AutoMigrate(&User{})
 
 	fmt.Println("Database migration completed")

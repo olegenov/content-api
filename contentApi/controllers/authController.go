@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"contentApi/dto"
 	"contentApi/models"
 	"contentApi/utils/token"
 	"errors"
@@ -14,7 +15,7 @@ func Register(c *gin.Context) {
 }
 
 func Login(c *gin.Context) {
-	var input models.LoginInput
+	var input dto.LoginInput
 
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
