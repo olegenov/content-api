@@ -33,6 +33,7 @@ func StartServer() {
 		projectsGroup.GET("/", middlewares.AdminOnly(), controllers.GetProjects)
 		projectsGroup.POST("/", controllers.CreateProject)
 		projectsGroup.GET("/:id", controllers.GetProject)
+		projectsGroup.GET("/my", controllers.GetMyProjects)
 	}
 
 	err := r.Run()
