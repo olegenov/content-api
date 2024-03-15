@@ -29,6 +29,7 @@ func StartServer() {
 	}
 
 	projectsGroup := api.Group("/projects")
+	projectsGroup.Use(middlewares.JwtAuthMiddleware())
 	{
 		projectsGroup.GET("/", middlewares.AdminOnly(), controllers.GetProjects)
 		projectsGroup.POST("/", controllers.CreateProject)
