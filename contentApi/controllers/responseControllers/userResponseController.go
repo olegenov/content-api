@@ -7,8 +7,10 @@ import (
 
 func GetUserResponse(user models.User) responses.UserResponse {
 	return responses.UserResponse{
-		ID:       user.ID,
-		Username: user.Username,
-		Email:    user.Email,
+		ID:        user.ID,
+		Username:  user.Username,
+		Email:     user.Email,
+		Firstname: user.Firstname,
+		Surname:   user.Surname,
 	}
 }
