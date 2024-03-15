@@ -1,7 +1,8 @@
 package controllers
 
 import (
-	"contentApi/dto"
+	"contentApi/controllers/responseControllers"
+	"contentApi/dto/responses"
 	"contentApi/models"
 	"contentApi/utils/token"
 	"errors"
@@ -25,10 +26,10 @@ func GetUsers(c *gin.Context) {
 		return
 	}
 
-	var usersResponse []dto.UserResponse
+	var usersResponse []responses.UserResponse
 
 	for _, user := range users {
-		usersResponse = append(usersResponse, GetUserResponse(user))
+		usersResponse = append(usersResponse, responseControllers.GetUserResponse(user))
 	}
 
 	c.JSON(http.StatusOK, usersResponse)
@@ -52,7 +53,7 @@ func GetUser(c *gin.Context) {
 		return
 	}
 
-	userResponse := GetUserResponse(user)
+	userResponse := responseControllers.GetUserResponse(user)
 
 	c.JSON(http.StatusOK, userResponse)
 }
@@ -198,7 +199,7 @@ func CurrentUser(c *gin.Context) {
 		return
 	}
 
-	userResponse := GetUserResponse(user)
+	userResponse := responseControllers.GetUserResponse(user)
 
 	c.JSON(http.StatusOK, gin.H{"message": "success", "data": userResponse})
 }

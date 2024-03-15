@@ -12,6 +12,7 @@ func StartServer() {
 	api := r.Group("/api")
 
 	userGroup := api.Group("/users")
+
 	userGroup.Use(middlewares.JwtAuthMiddleware())
 	{
 		userGroup.GET("/", middlewares.AdminOnly(), controllers.GetUsers)
@@ -25,6 +26,13 @@ func StartServer() {
 	{
 		authGroup.POST("/register", controllers.Register)
 		authGroup.POST("/login", controllers.Login)
+	}
+
+	projectsGroup := api.Group("/projects")
+	{
+		projectsGroup.GET("/", middlewares.AdminOnly(), controllers.GetProjects)
+		projectsGroup.POST("/", controllers.CreateProject)
+		projectsGroup.GET("/:id", controllers.GetProject)
 	}
 
 	err := r.Run()

@@ -1,4 +1,4 @@
-package dto
+package responses
 
 type UserResponse struct {
 	ID       uint   `json:"id"`

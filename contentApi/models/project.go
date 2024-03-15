@@ -5,7 +5,8 @@ import "github.com/jinzhu/gorm"
 type Project struct {
 	gorm.Model
 
-	Name      string `gorm:"not null"`
+	Name      string `json:"name" gorm:"not null"`
 	CreatorID uint
-	Posts     []Post `gorm:"foreignKey:ProjectID,constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	Creator   User
+	Posts     []Post `json:"posts" gorm:"foreignKey:ProjectID,constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 }
