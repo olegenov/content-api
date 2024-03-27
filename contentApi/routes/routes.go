@@ -37,6 +37,15 @@ func StartServer() {
 		projectsGroup.GET("/my", controllers.GetMyProjects)
 	}
 
+	teamsGroup := api.Group("/teams")
+	teamsGroup.Use(middlewares.JwtAuthMiddleware())
+	{
+		teamsGroup.GET("/", middlewares.AdminOnly(), controllers.GetTeams)
+		teamsGroup.POST("/", controllers.CreateTeam)
+		teamsGroup.GET("/:id", controllers.GetTeam)
+		teamsGroup.GET("/my", controllers.GetMyTeams)
+	}
+
 	err := r.Run()
 
 	if err != nil {

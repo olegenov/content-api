@@ -14,9 +14,8 @@ func GetProjects(c *gin.Context) {
 	var projects []models.Project
 
 	models.DbMutex.Lock()
-	defer models.DbMutex.Unlock()
-
 	result := models.DB.Preload("Creator").Find(&projects)
+	models.DbMutex.Unlock()
 
 	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get projects"})
@@ -38,12 +37,11 @@ func GetProject(c *gin.Context) {
 	var project models.Project
 
 	models.DbMutex.Lock()
-	defer models.DbMutex.Unlock()
-
 	if err := models.DB.Preload("Creator").First(&project, projectID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Project not found"})
 		return
 	}
+	models.DbMutex.Unlock()
 
 	userID, _ := token.ExtractTokenID(c)
 
@@ -65,15 +63,40 @@ func CreateProject(c *gin.Context) {
 	}
 
 	userID, _ := token.ExtractTokenID(c)
+
+	var team models.Team
+
+	models.DbMutex.Lock()
+	teamResult := models.DB.First(&team, projectRequest.TeamID)
+	models.DbMutex.Unlock()
+
+	if teamResult.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get team"})
+		return
+	}
+
+	var isMember bool
+	for _, user := range team.Users {
+		if user.ID == userID {
+			isMember = true
+			break
+		}
+	}
+
+	if !isMember {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "User is not a member of the team"})
+		return
+	}
+
 	project := models.Project{
 		Name:      projectRequest.Name,
 		CreatorID: userID,
+		TeamID:    projectRequest.TeamID,
 	}
 
-	result := models.DB.Create(&project)
-
 	models.DbMutex.Lock()
-	defer models.DbMutex.Unlock()
+	result := models.DB.Create(&project)
+	models.DbMutex.Unlock()
 
 	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create project"})
@@ -88,9 +111,13 @@ func GetMyProjects(c *gin.Context) {
 	userID, _ := token.ExtractTokenID(c)
 
 	models.DbMutex.Lock()
-	defer models.DbMutex.Unlock()
-
-	result := models.DB.Preload("Creator").Where("creator_id = ?", userID).Find(&projects)
+	result := models.DB.
+		Preload("Creator").
+		Preload("Team").
+		Joins("JOIN team_users ON team_users.team_id = projects.team_id").
+		Where("projects.creator_id = ? OR team_users.user_id = ?", userID, userID).
+		Find(&projects)
+	models.DbMutex.Unlock()
 
 	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get projects"})

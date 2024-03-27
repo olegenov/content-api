@@ -3,7 +3,6 @@ package middlewares
 import (
 	"contentApi/models"
 	"errors"
-	"fmt"
 	"github.com/jinzhu/gorm"
 	"net/http"
 
@@ -28,8 +27,6 @@ func JwtAuthMiddleware() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-
-		fmt.Printf("UserID: %d\n", userID)
 
 		var user models.User
 

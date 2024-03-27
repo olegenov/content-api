@@ -12,4 +12,5 @@ type User struct {
 	Password  string    `json:"password" gorm:"not null"`
 	Projects  []Project `gorm:"foreignKey:CreatorID"`
 	Role      string
+	Teams     []Team `gorm:"gorm:many2many:team_users"`
 }

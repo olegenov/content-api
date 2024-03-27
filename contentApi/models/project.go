@@ -9,4 +9,6 @@ type Project struct {
 	CreatorID uint
 	Creator   User
 	Posts     []Post `json:"posts" gorm:"foreignKey:ProjectID,constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	TeamID    uint
+	Team      Team
 }
