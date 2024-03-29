@@ -67,7 +67,7 @@ func CreateProject(c *gin.Context) {
 	var team models.Team
 
 	models.DbMutex.Lock()
-	teamResult := models.DB.First(&team, projectRequest.TeamID)
+	teamResult := models.DB.Preload("Users").First(&team, projectRequest.TeamID)
 	models.DbMutex.Unlock()
 
 	if teamResult.Error != nil {
@@ -75,7 +75,8 @@ func CreateProject(c *gin.Context) {
 		return
 	}
 
-	var isMember bool
+	isMember := false
+
 	for _, user := range team.Users {
 		if user.ID == userID {
 			isMember = true
@@ -84,7 +85,7 @@ func CreateProject(c *gin.Context) {
 	}
 
 	if !isMember {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "User is not a member of the team"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User is not a member of the team"})
 		return
 	}
 
