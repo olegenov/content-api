@@ -37,7 +37,12 @@ func GetProject(c *gin.Context) {
 	var project models.Project
 
 	models.DbMutex.Lock()
-	if err := models.DB.Preload("Creator").First(&project, projectID).Error; err != nil {
+	if err := models.DB.
+		Preload("Creator").
+		Preload("Posts").
+		Preload("Posts.Assign").
+		First(&project, projectID).
+		Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Project not found"})
 		return
 	}
@@ -45,8 +50,28 @@ func GetProject(c *gin.Context) {
 
 	userID, _ := token.ExtractTokenID(c)
 
-	if userID != project.CreatorID && project.Creator.Role != "ADMIN" {
-		c.JSON(http.StatusNotFound, gin.H{"error": "It is not your project"})
+	var team models.Team
+
+	models.DbMutex.Lock()
+	if err := models.DB.
+		Preload("Users").
+		First(&team, project.TeamID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Team not found"})
+		return
+	}
+	models.DbMutex.Unlock()
+
+	isMember := false
+
+	for _, user := range team.Users {
+		if user.ID == userID {
+			isMember = true
+			break
+		}
+	}
+
+	if !isMember {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User is not a member of the team"})
 		return
 	}
 

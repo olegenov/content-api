@@ -37,6 +37,12 @@ func StartServer() {
 		projectsGroup.GET("/my", controllers.GetMyProjects)
 	}
 
+	postsGroup := api.Group("/projects/:id/post")
+	postsGroup.Use(middlewares.JwtAuthMiddleware())
+	{
+		postsGroup.GET("/:post-id", controllers.GetPost)
+	}
+
 	teamsGroup := api.Group("/teams")
 	teamsGroup.Use(middlewares.JwtAuthMiddleware())
 	{

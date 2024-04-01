@@ -13,6 +13,7 @@ func GetProjectResponse(project models.Project) responses.ProjectResponse {
 
 	projectResponse.Creator = GetUserResponse(project.Creator)
 	projectResponse.Team = GetProjectTeamResponse(project.Team)
+	projectResponse.Posts = []responses.PostResponse{}
 
 	for _, post := range project.Posts {
 		projectResponse.Posts = append(projectResponse.Posts, GetPostResponse(post))
