@@ -42,7 +42,7 @@ func GetTeam(c *gin.Context) {
 
 	models.DbMutex.Lock()
 
-	if err := models.DB.Preload("Creator").First(&team, teamID).Error; err != nil {
+	if err := models.DB.Preload("Creator").Preload("Users").First(&team, teamID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Team not found"})
 		return
 	}
@@ -134,5 +134,5 @@ func GetMyTeams(c *gin.Context) {
 		teamResponse = append(teamResponse, responseControllers.GetTeamResponse(team))
 	}
 
-	c.JSON(http.StatusOK, gin.H{"teams": teamResponse})
+	c.JSON(http.StatusOK, gin.H{"teams": teamResponse, "request_id": userID})
 }

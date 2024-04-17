@@ -42,6 +42,7 @@ func init() {
 	DB.Debug().AutoMigrate(&Project{})
 	DB.Debug().AutoMigrate(&User{})
 	DB.Debug().AutoMigrate(&Team{})
+	DB.Debug().AutoMigrate(&Invitation{})
 
 	fmt.Println("Database migration completed")
 }

@@ -40,7 +40,9 @@ func StartServer() {
 	postsGroup := api.Group("/projects/:id/post")
 	postsGroup.Use(middlewares.JwtAuthMiddleware())
 	{
+		postsGroup.POST("/", controllers.CreatePost)
 		postsGroup.GET("/:post-id", controllers.GetPost)
+		postsGroup.PATCH("/:post-id", controllers.EditPost)
 	}
 
 	teamsGroup := api.Group("/teams")
@@ -50,6 +52,15 @@ func StartServer() {
 		teamsGroup.POST("/", controllers.CreateTeam)
 		teamsGroup.GET("/:id", controllers.GetTeam)
 		teamsGroup.GET("/my", controllers.GetMyTeams)
+	}
+
+	invitationGroup := api.Group("/invitations")
+	invitationGroup.Use(middlewares.JwtAuthMiddleware())
+	{
+		invitationGroup.POST("/", controllers.CreateInvitation)
+		invitationGroup.POST("/:id", controllers.ReceiveInvitation)
+		invitationGroup.GET("/my", controllers.GetMyInvitations)
+		invitationGroup.DELETE("/:id", controllers.RejectInvitation)
 	}
 
 	err := r.Run()
